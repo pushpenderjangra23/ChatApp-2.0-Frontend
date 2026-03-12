@@ -19,6 +19,7 @@ function ChatHeader({ setIsMenuOpen }) {
     const [status, setStatus] = useState('offline');
     const [typingStatus, setTypingStatus] = useState(null);
     const typingTimeoutRef = useRef(null);
+    const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
 
     const handleMouseEnter = (iconName) => {
         setHoveredIcon(iconName);
@@ -75,11 +76,11 @@ function ChatHeader({ setIsMenuOpen }) {
         sessionStorage.setItem('chatUser', JSON.stringify(chatUser));
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('value', value);
-        window.open(`${process.env.REACT_APP_BASE_URL}/call`, '_blank');
+        window.open(`${basePath}/call`, '_blank');
         console.log(socket.id)
     }
     return (
-        <div className="flex items-center justify-between p-5" style={{ 'background': 'rgb(24, 33, 47)' }}>
+        <div className="flex items-center justify-between p-4 md:p-5 border-b border-white/10 bg-slate-900/80 backdrop-blur-md">
             <div className='block md:hidden cursor-pointer text-white' style={{ 'marginRight': '1rem' }} onClick={() => {
                 setIsMenuOpen(true);
             }}>
@@ -92,19 +93,19 @@ function ChatHeader({ setIsMenuOpen }) {
                         setImageZoomShowModal(true);
                     }}
                     alt="User"
-                    className="rounded-full w-12 h-12 cursor-pointer"
+                    className="rounded-full w-12 h-12 cursor-pointer ring-2 ring-cyan-400/40 object-cover"
                 />
                 {showImageZoomModal && (
                     <Modal image={chatUser?.profileimg} alt={'user'} onClose={() => setImageZoomShowModal(false)} />)}
                 <div className="ml-3">
                     <span className="block font-semibold text-white">{chatUser?.username}</span>
-                    <span className="block text-sm text-gray-400" style={{ 'fontSize': '13px' }}>{typingStatus || status}</span>
+                    <span className="block text-sm text-cyan-200/80" style={{ 'fontSize': '13px' }}>{typingStatus || status}</span>
                 </div>
             </div>
-            <div className="flex items-center space-x-4 text-white" style={{ 'width': '9em' }}>
+            <div className="flex items-center space-x-3 text-white" style={{ 'width': '9em' }}>
 
                 <button
-                    className="p-2 bg-gray-700 rounded-full text-white"
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('settings')}
                     onMouseLeave={handleMouseLeave}
                     onClick={() => chatUser ? setShowSettingPopup(true) : setShowSettingPopup(false)}
@@ -114,7 +115,7 @@ function ChatHeader({ setIsMenuOpen }) {
                 </button>
                 {showSettingPopup && (<SettingPopup currentUser={user} user={chatUser} onClose={() => setShowSettingPopup(false)} setChatUser={setChatUser} socket={socket} setUser={setUser} setImageZoomShowModal={setImageZoomShowModal} />)}
                 <button
-                    className="p-2 bg-gray-700 rounded-full text-white"
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('call')}
                     onMouseLeave={handleMouseLeave}
                     onClick={() => chatUser ? handleSetData('voice') : ""}
@@ -124,7 +125,7 @@ function ChatHeader({ setIsMenuOpen }) {
                 {/* {showVoiceCall && (<VoiceCall user={user} chatUser={chatUser} onClose={() => setShowVoiceCall(false)} value={'voice'} />)} */}
                 {/* {showVoiceCall && (<VoiceCall user={user} chatUser={chatUser} onClose={() => setShowVoiceCall(false)} value={'voice'} />)} */}
                 <button
-                    className="p-2 bg-gray-700 rounded-full text-white"
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('video')}
                     onMouseLeave={handleMouseLeave}
                     // onClick={() => chatUser ? setShowVideoCall(true) : setShowVideoCall(false)}

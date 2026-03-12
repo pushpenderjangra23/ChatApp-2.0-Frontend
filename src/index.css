@@ -8,6 +8,11 @@
 
 }
 
+body {
+    background: radial-gradient(circle at top left, #0f172a 0%, #020617 45%, #000 100%);
+    color: #e2e8f0;
+}
+
 /* For WebKit browsers (Chrome, Safari, etc.) */
 .hide-scrollbar::-webkit-scrollbar {
     width: 0;
