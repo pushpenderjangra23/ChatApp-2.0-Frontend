@@ -4,25 +4,15 @@ import { IoMenu } from 'react-icons/io5';
 function WelcomeMessage({ setIsMenuOpen }) {
     return (
         <>
-            <div className='block md:hidden cursor-pointer text-white p-10' style={{ 'marginRight': '1rem' }} onClick={() => {
-                setIsMenuOpen(true);
-            }}>
-                <IoMenu size={20} />
+            <div className="block md:hidden cursor-pointer text-main p-4" onClick={() => setIsMenuOpen(true)}>
+                <IoMenu size={22} />
             </div>
-            <div className="flex flex-col items-center justify-center h-full text-center text-slate-50 p-8">
-
-                <h1 className="text-2xl font-semibold text-white mb-4">
-                    Welcome to RealTalk!
-                </h1>
-                <p className="text-lg mb-2">
-                    RealTalk lets you connect with friends and family through instant messaging, video calls, and more.
-                </p>
-                <p className="text-lg mb-2">
-                    You can share photos, videos seamlessly.
-                </p>
-                <p className="text-lg">
-                    Start a conversation now and experience real-time communication.
-                </p>
+            <div className="h-full flex items-center justify-center p-6 md:p-10">
+                <div className="panel-strong rounded-3xl p-8 md:p-12 max-w-2xl text-center">
+                    <span className="inline-flex px-4 py-1 rounded-full panel-soft text-sub text-xs uppercase tracking-[0.2em]">Start chatting</span>
+                    <h1 className="text-main text-3xl md:text-5xl font-semibold mt-5">Your conversations, reimagined.</h1>
+                    <p className="text-sub text-base md:text-lg mt-4">Select a friend on the left and jump into secure messaging, voice calls, and video calls instantly.</p>
+                </div>
             </div>
         </>
     );

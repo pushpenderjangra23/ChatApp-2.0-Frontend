@@ -1,14 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+
 const UserDetailsPopup = ({ currentUser, user, onClose, setChatUser, socket, setUser, setImageZoomShowModal }) => {
     if (!user) return null;
-    // const handleRemoveFriend = () => {
-    //     onRemoveFriend(user._id);
-    //     onClose(); // Close the popup after removing the friend
-    // };
 
     const handleRemoveFriend = async () => {
-
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/removefriend`, {
                 friendId: user.id,
@@ -18,57 +14,41 @@ const UserDetailsPopup = ({ currentUser, user, onClose, setChatUser, socket, set
                 },
             });
             if (response.data.message === 'Friend removed successfully') {
-                // if (selectedUser) {
                 socket.emit('friendRemove', { senderId: currentUser._id, ReceiverId: user.id });
-                setUser(null)
+                setUser(null);
                 onClose();
-                // }
-                // console.log(selectedUser._id, user._id, chatUser.id);
-                if (user.id) {
-                    setChatUser(null);
-                }
+                if (user.id) setChatUser(null);
                 localStorage.removeItem(user.id);
-                // window.location.reload();
             }
         } catch (error) {
             console.error('Error removing friend:', error);
         }
     };
+
     return (
-        <div className="fixed inset-1 bg-gray-900 bg-opacity-75 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="panel-strong rounded-3xl shadow-lg p-6 max-w-md w-full text-main">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-gray-800">User Details</h2>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-800 text-lg"
-                    >
-                        &times;
-                    </button>
+                    <h2 className="text-xl font-bold">User Details</h2>
+                    <button onClick={onClose} className="text-sub hover:text-main text-2xl leading-none">&times;</button>
                 </div>
 
-                <div className="flex items-start">
-                    {/* User Image */}
+                <div className="flex items-start gap-4">
                     <img
                         src={user.profileimg}
                         alt={user.username}
-                        className="rounded-full w-24 h-24 mr-6 cursor-pointer"
+                        className="rounded-full w-24 h-24 object-cover border border-soft cursor-pointer"
                         onClick={() => setImageZoomShowModal(true)}
                     />
-                    <div>
-                        {/* User Details */}
-                        <h3 className="text-xl font-semibold text-gray-800">{user.username}</h3>
-                        <p className="text-gray-600">Email : {user.email}</p>
-                        <p className="text-gray-600">Bio : {user.description}</p>
+                    <div className="min-w-0">
+                        <h3 className="text-xl font-semibold truncate">{user.username}</h3>
+                        <p className="text-sub break-all">Email: {user.email}</p>
+                        <p className="text-sub">Bio: {user.description || 'No bio added'}</p>
                     </div>
                 </div>
 
-                <div className="mt-4">
-                    {/* Remove Friend Button */}
-                    <button
-                        onClick={handleRemoveFriend}
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                    >
+                <div className="mt-5">
+                    <button onClick={handleRemoveFriend} className="danger-btn font-semibold py-2 px-4 rounded-xl">
                         Remove Friend
                     </button>
                 </div>
