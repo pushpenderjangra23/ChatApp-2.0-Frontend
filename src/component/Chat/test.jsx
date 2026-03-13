@@ -5,8 +5,8 @@ import { useSocket } from '../context/socketContext';
 import { UserContext } from '../context/user';
 import Peer from 'peerjs';
 import UserFetch from '../userFetch';
-import axios from 'axios';
 import forge from 'node-forge';
+
 function Test() {
     const socket = useSocket();
     const { user } = useContext(UserContext);
@@ -34,84 +34,60 @@ function Test() {
             }
         };
     }, [user, socket]);
+
     useEffect(() => {
         if (!localStorage.getItem('privateKey') && !localStorage.getItem('publicKey')) {
-            // Show loading state
             setLoadingForKey(true);
-
-            // Use setTimeout to move the heavy computation off the main thread
             setTimeout(() => {
                 try {
                     const { privateKey, publicKey } = forge.pki.rsa.generateKeyPair({ bits: 2048 });
                     localStorage.setItem('privateKey', forge.pki.privateKeyToPem(privateKey));
                     localStorage.setItem('publicKey', forge.pki.publicKeyToPem(publicKey));
                 } catch (error) {
-                    console.error("Error generating keys:", error);
+                    console.error('Error generating keys:', error);
                 } finally {
                     setLoadingForKey(false);
                 }
             }, 100);
         } else {
-            setLoadingForKey(false); // Set loading to false if keys already exist
+            setLoadingForKey(false);
         }
-    }, [])
+    }, []);
+
     useEffect(() => {
         socket.on('voice_call', (data) => {
-            console.log('Incoming call:', data);
             setIncomingCall(data);
             setCallPopupVisible(true);
-            setCallType(data.callType); // Set the call type ('audio' or 'video')
+            setCallType(data.callType);
 
             const peer = new Peer({
                 config: {
-                    'iceServers': [
+                    iceServers: [
                         { urls: 'stun:stun.l.google.com:19302' },
-                        {
-                            urls: "stun:stun.relay.metered.ca:80",
-                        },
-                        {
-                            urls: "turn:global.relay.metered.ca:80",
-                            username,
-                            credential,
-                        },
-                        {
-                            urls: "turn:global.relay.metered.ca:80?transport=tcp",
-                            username,
-                            credential,
-                        },
-                        {
-                            urls: "turn:global.relay.metered.ca:443",
-                            username,
-                            credential,
-                        },
-                        {
-                            urls: "turns:global.relay.metered.ca:443?transport=tcp",
-                            username,
-                            credential,
-                        },
-                    ]
-                }
+                        { urls: 'stun:stun.relay.metered.ca:80' },
+                        { urls: 'turn:global.relay.metered.ca:80', username, credential },
+                        { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username, credential },
+                        { urls: 'turn:global.relay.metered.ca:443', username, credential },
+                        { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username, credential },
+                    ],
+                },
             });
             peerInstance.current = peer;
 
             peer.on('open', (id) => {
                 const conn = peer.connect(data.peerId);
-                conn.on('open', () => {
-                    conn.send('hi!');
-                });
+                conn.on('open', () => conn.send('hi!'));
                 setCallUserId(data.senderId);
                 setPeerjsId(id);
             });
-
         });
+
         return () => {
             socket.off('voice_call');
         };
-    }, [socket]);
-
+    }, [socket, credential, username]);
 
     const handleAcceptCall = async () => {
-
         const obj = {
             toUserId: calluserid,
             peerId: peerjsid,
@@ -172,6 +148,14 @@ function Test() {
                                 </button>
                             </div>
                         </div>
+                    )}
+                </div>
+            ) : (
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="panel-strong rounded-3xl p-10 text-center">
+                        <div className="animate-spin rounded-full h-14 w-14 border-4 border-cyan-300 border-t-transparent mx-auto"></div>
+                        <h2 className="mt-5 text-xl font-semibold text-main">Preparing Secure Session</h2>
+                        <p className="text-sub mt-1">Generating encryption keys for private chat.</p>
                     </div>
                 )}
             </div>) :

@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import forge from 'node-forge';
+import ThemeToggle from '../utility/ThemeToggle';
 
 function Sidebar({ setIsMenuOpen, sendMessage }) {
     const [users, setUsers] = useState([]);
@@ -415,12 +416,12 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                     {/* Popup for Friend Requests */}
                     {showPopupFriendRequest && (
                         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 animate-fadeIn" >
-                            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 animate-scaleIn">
+                            <div className="panel-strong rounded-2xl shadow-lg w-full max-w-md p-6 animate-scaleIn text-main">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-xl font-bold text-gray-800">Friend Requests</h2>
+                                    <h2 className="text-xl font-bold">Friend Requests</h2>
                                     <button
                                         onClick={togglePopupForFriends}
-                                        className="text-gray-500 hover:text-gray-800 text-lg transition-colors duration-200"
+                                        className="text-sub hover:text-main text-lg transition-colors duration-200"
                                     >
                                         &times;
                                     </button>
@@ -439,7 +440,7 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                                     className="w-12 h-12 rounded-full mr-4"
                                                 />
                                                 <div className="flex-1">
-                                                    <h3 className="text-lg font-semibold text-gray-800">{request.username}</h3>
+                                                    <h3 className="text-lg font-semibold text-main">{request.username}</h3>
                                                 </div>
                                                 <div className="flex space-x-2">
                                                     <button
@@ -593,7 +594,7 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="font-semibold">{u.username}</h4>
-                                            <p className="text-xs text-gray-400">
+                                            <p className="text-xs text-sub">
                                                 {allUserStatus.some((status) => status === u._id) ? "Online" : "Offline"}
                                                 {/* {console.log(allUserStatus)} */}
                                             </p>

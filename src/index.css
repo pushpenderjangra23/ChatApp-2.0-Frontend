@@ -5,7 +5,95 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
 
+:root,
+[data-theme='dark'] {
+    --bg: #070b16;
+    --bg-secondary: #0f172a;
+    --surface: rgba(15, 23, 42, 0.84);
+    --surface-strong: #111b2f;
+    --surface-soft: #1e293b;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --border: rgba(148, 163, 184, 0.22);
+    --accent: #22d3ee;
+    --accent-2: #6366f1;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --shadow: 0 20px 60px rgba(2, 6, 23, 0.55);
+}
+
+[data-theme='light'] {
+    --bg: #eef2ff;
+    --bg-secondary: #dbeafe;
+    --surface: rgba(255, 255, 255, 0.85);
+    --surface-strong: #ffffff;
+    --surface-soft: #e2e8f0;
+    --text-main: #0f172a;
+    --text-sub: #475569;
+    --border: rgba(15, 23, 42, 0.16);
+    --accent: #0ea5e9;
+    --accent-2: #4f46e5;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+body {
+    min-height: 100vh;
+    background: radial-gradient(circle at top left, var(--bg-secondary) 0%, var(--bg) 52%, var(--bg) 100%);
+    color: var(--text-main);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+.app-bg {
+    background: radial-gradient(circle at top left, var(--bg-secondary) 0%, var(--bg) 52%, var(--bg) 100%);
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.panel-strong {
+    background: var(--surface-strong);
+    border: 1px solid var(--border);
+}
+
+.panel-soft {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+}
+
+.text-main {
+    color: var(--text-main);
+}
+
+.text-sub {
+    color: var(--text-sub);
+}
+
+.border-soft {
+    border-color: var(--border);
+}
+
+.accent-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+}
+
+.danger-btn {
+    background: var(--danger);
+    color: #fff;
+}
+
+.success-btn {
+    background: var(--success);
+    color: #fff;
 }
 
 body {
@@ -19,10 +107,8 @@ body {
     height: 0;
 }
 
-/* For Firefox */
 .hide-scrollbar {
     scrollbar-width: none;
-    /* hide scrollbar */
     -ms-overflow-style: none;
     /* hide scrollbar in IE 10+ */
 }

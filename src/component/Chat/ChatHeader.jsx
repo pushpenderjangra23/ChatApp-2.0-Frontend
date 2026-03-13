@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChatUserContext } from '../context/chatUser';
-import { IoMenu } from "react-icons/io5";
+import { IoMenu } from 'react-icons/io5';
 import { useContext } from 'react';
-import { IoMdSettings } from "react-icons/io";
-import { IoMdCall } from "react-icons/io";
-import { FaVideo } from "react-icons/fa";
+import { IoMdSettings, IoMdCall } from 'react-icons/io';
+import { FaVideo } from 'react-icons/fa';
 import { useSocket } from '../context/socketContext';
 import { UserContext } from '../context/user';
 import SettingPopup from '../setting/pop.setting';
 import Modal from '../utility/zoomimage';
+import ThemeToggle from '../utility/ThemeToggle';
+
 function ChatHeader({ setIsMenuOpen }) {
     const { chatUser, setChatUser } = useContext(ChatUserContext);
     const socket = useSocket();
@@ -21,54 +22,28 @@ function ChatHeader({ setIsMenuOpen }) {
     const typingTimeoutRef = useRef(null);
     const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
 
-    const handleMouseEnter = (iconName) => {
-        setHoveredIcon(iconName);
-    };
-
-    const handleMouseLeave = () => {
-        setHoveredIcon(null);
-    };
     useEffect(() => {
         if (socket) {
-            socket.on('isTyping', ({ status }) => {
-                setTypingStatus(status);
-                if (typingTimeoutRef.current) {
-                    clearTimeout(typingTimeoutRef.current);
-                }
-                typingTimeoutRef.current = setTimeout(() => {
-                    setTypingStatus(null);
-                }, 2000);
+            socket.on('isTyping', ({ status: typing }) => {
+                setTypingStatus(typing);
+                if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = setTimeout(() => setTypingStatus(null), 2000);
             });
         }
         return () => {
             socket.off('isTyping');
-            if (typingTimeoutRef.current) {
-                clearTimeout(typingTimeoutRef.current);
-            }
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
         };
     }, [socket]);
+
     useEffect(() => {
         if (socket && chatUser) {
             socket.emit('isActive', { ReceiverId: chatUser.id });
             socket.on('isActive', (data) => {
-                // console.log("isActive", data)
-                if (data.status) {
-                    setStatus('online');
-                }
-                else if (data.userId) {
-                    if (data.userId === chatUser.id) {
-                        setStatus('online');
-                    }
-                }
-                else if (data.disconnectedUserId) {
-                    if (data.disconnectedUserId === chatUser.id) {
-                        setStatus('offline');
-                    }
-                }
-                else {
-                    setStatus('offline');
-                }
-            })
+                if (data.status || data.userId === chatUser.id) setStatus('online');
+                else if (data.disconnectedUserId === chatUser.id) setStatus('offline');
+                else setStatus('offline');
+            });
         }
     }, [socket, chatUser]);
 
@@ -88,10 +63,8 @@ function ChatHeader({ setIsMenuOpen }) {
             </div>
             <div className="flex items-center" style={{ 'fontSize': '13px' }}>
                 <img
-                    src={chatUser?.profileimg || "https://cdn-icons-png.flaticon.com/512/149/149071.png "}
-                    onClick={() => {
-                        setImageZoomShowModal(true);
-                    }}
+                    src={chatUser?.profileimg || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
+                    onClick={() => setImageZoomShowModal(true)}
                     alt="User"
                     className="rounded-full w-12 h-12 cursor-pointer ring-2 ring-cyan-400/40 object-cover"
                 />
@@ -104,6 +77,8 @@ function ChatHeader({ setIsMenuOpen }) {
             </div>
             <div className="flex items-center space-x-3 text-white" style={{ 'width': '9em' }}>
 
+            <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <button
                     className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('settings')}
@@ -111,19 +86,16 @@ function ChatHeader({ setIsMenuOpen }) {
                     onClick={() => chatUser ? setShowSettingPopup(true) : setShowSettingPopup(false)}
 
                 >
-                    <IoMdSettings size={hoveredIcon === 'settings' ? 16 : 12} />
+                    <IoMdSettings size={hoveredIcon === 'settings' ? 17 : 14} />
                 </button>
-                {showSettingPopup && (<SettingPopup currentUser={user} user={chatUser} onClose={() => setShowSettingPopup(false)} setChatUser={setChatUser} socket={socket} setUser={setUser} setImageZoomShowModal={setImageZoomShowModal} />)}
                 <button
                     className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('call')}
                     onMouseLeave={handleMouseLeave}
                     onClick={() => chatUser ? handleSetData('voice') : ""}
                 >
-                    <IoMdCall size={hoveredIcon === 'call' ? 16 : 12} />
+                    <IoMdCall size={hoveredIcon === 'call' ? 17 : 14} />
                 </button>
-                {/* {showVoiceCall && (<VoiceCall user={user} chatUser={chatUser} onClose={() => setShowVoiceCall(false)} value={'voice'} />)} */}
-                {/* {showVoiceCall && (<VoiceCall user={user} chatUser={chatUser} onClose={() => setShowVoiceCall(false)} value={'voice'} />)} */}
                 <button
                     className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
                     onMouseEnter={() => handleMouseEnter('video')}
@@ -131,13 +103,22 @@ function ChatHeader({ setIsMenuOpen }) {
                     // onClick={() => chatUser ? setShowVideoCall(true) : setShowVideoCall(false)}
                     onClick={() => chatUser ? handleSetData('video') : ""}
                 >
-
-                    <FaVideo size={hoveredIcon === 'video' ? 16 : 12} />
+                    <FaVideo size={hoveredIcon === 'video' ? 17 : 14} />
                 </button>
-                {/* {showVideoCall && (<VoiceCall user={user} chatUser={chatUser} onClose={() => setShowVideoCall(false)} value={'video'} />)} */}
-
             </div>
-        </div >
+
+            {showSettingPopup && (
+                <SettingPopup
+                    currentUser={user}
+                    user={chatUser}
+                    onClose={() => setShowSettingPopup(false)}
+                    setChatUser={setChatUser}
+                    socket={socket}
+                    setUser={setUser}
+                    setImageZoomShowModal={setImageZoomShowModal}
+                />
+            )}
+        </div>
     );
 }
 

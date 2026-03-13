@@ -20,7 +20,7 @@ function ChatMessages({ setSendMessage }) {
     const [zoomImage, zoomSetImage] = useState('');
     const [uploadStatus, setUploadStatus] = useState(null);
     const [selectedMessageIndex, setSelectedMessageIndex] = useState(null);
-    const [menuPosition, setMenuPosition] = useState('bottom');
+    const [, setMenuPosition] = useState('bottom');
     const [contextMenuCoords, setContextMenuCoords] = useState(null);
     const menuRef = useRef(null);
     const buttonRef = useRef(null);

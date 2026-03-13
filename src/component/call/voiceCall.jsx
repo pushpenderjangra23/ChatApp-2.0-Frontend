@@ -18,41 +18,23 @@ const VoiceCall = () => {
     const peerInstance = useRef(null);
     const username = process.env.REACT_APP_METERED_USERNAME;
     const credential = process.env.REACT_APP_METERED_PASSWORD;
+
     useEffect(() => {
         const peer = new Peer({
             config: {
-                'iceServers': [
+                iceServers: [
                     { urls: 'stun:stun.l.google.com:19302' },
-                    {
-                        urls: "stun:stun.relay.metered.ca:80",
-                    },
-                    {
-                        urls: "turn:global.relay.metered.ca:80",
-                        username,
-                        credential,
-                    },
-                    {
-                        urls: "turn:global.relay.metered.ca:80?transport=tcp",
-                        username,
-                        credential,
-                    },
-                    {
-                        urls: "turn:global.relay.metered.ca:443",
-                        username,
-                        credential,
-                    },
-                    {
-                        urls: "turns:global.relay.metered.ca:443?transport=tcp",
-                        username,
-                        credential,
-                    },
-                ]
-            }
+                    { urls: 'stun:stun.relay.metered.ca:80' },
+                    { urls: 'turn:global.relay.metered.ca:80', username, credential },
+                    { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username, credential },
+                    { urls: 'turn:global.relay.metered.ca:443', username, credential },
+                    { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username, credential },
+                ],
+            },
         });
         peerInstance.current = peer;
 
         peer.on('open', (id) => {
-            console.log('My peer ID is: ' + id);
             socket.emit('voice_call', {
                 toUserId: chatUser?.id,
                 peerId: id,
@@ -66,9 +48,7 @@ const VoiceCall = () => {
         peer.on('call', (call) => {
             if (localStream) {
                 call.answer(localStream);
-                call.on('stream', (stream) => {
-                    setRemoteStream(stream);
-                });
+                call.on('stream', (stream) => setRemoteStream(stream));
             }
         });
 
@@ -88,10 +68,9 @@ const VoiceCall = () => {
         const handleCall = async () => {
             const stream = await getUserMedia();
             socket.on('user-connected', (data) => {
-                console.log('User connected:', data);
                 const call = peer.call(data.peerId, stream);
-                call?.on('stream', (remoteStream) => {
-                    setRemoteStream(remoteStream);
+                call?.on('stream', (remote) => {
+                    setRemoteStream(remote);
                     setIsCalling(false);
                 });
             });
@@ -102,32 +81,31 @@ const VoiceCall = () => {
         setShowCallPopup(true);
         return () => {
             peerInstance.current?.destroy();
-            localStream?.getTracks().forEach(track => track.stop());
+            localStream?.getTracks().forEach((track) => track.stop());
         };
     }, [socket]);
 
     const toggleMute = () => {
         if (localStream) {
-            const newIsMuted = !isMuted;
-            localStream.getAudioTracks().forEach(track => (track.enabled = !newIsMuted));
-            setIsMuted(newIsMuted);
+            const next = !isMuted;
+            localStream.getAudioTracks().forEach((track) => (track.enabled = !next));
+            setIsMuted(next);
         }
     };
 
     const toggleVideoHide = () => {
         if (localStream) {
-            const newIsVideoHidden = !isVideoHidden;
-            localStream.getVideoTracks().forEach(track => (track.enabled = !newIsVideoHidden));
-            setIsVideoHidden(newIsVideoHidden);
+            const next = !isVideoHidden;
+            localStream.getVideoTracks().forEach((track) => (track.enabled = !next));
+            setIsVideoHidden(next);
         }
     };
 
     const handleCallDisconnect = () => {
-        // onClose(false);
         setShowCallPopup(false);
         peerInstance.current?.disconnect();
         peerInstance.current?.destroy();
-        localStream?.getTracks().forEach(track => track.stop());
+        localStream?.getTracks().forEach((track) => track.stop());
         setLocalStream(null);
         socket.emit('end-call', { toUserId: chatUser?.id });
         window.close();
@@ -138,106 +116,65 @@ const VoiceCall = () => {
             setShowCallPopup(false);
             peerInstance.current?.disconnect();
             peerInstance.current?.destroy();
-            localStream?.getTracks().forEach(track => track.stop());
+            localStream?.getTracks().forEach((track) => track.stop());
             setLocalStream(null);
             sessionStorage.removeItem('chatUser');
             sessionStorage.removeItem('value');
             sessionStorage.removeItem('user');
             window.close();
-            // onClose(false);
         });
     }, [localStream, socket]);
-    if (!chatUser || !user || !value) {
-        window.open('/', '_self');
-    }
-    console.log(socket.id)
+
+    if (!chatUser || !user || !value) window.open('/', '_self');
+
     return (
-        <div >
-            {/* <h1>{value === 'video' ? 'Video Call' : 'Voice Call'}</h1> */}
+        <div className="app-bg min-h-screen">
             {showCallPopup && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 flex-col md:flex-row" style={{ background: 'black' }}>
-                    {localStream && value === 'video' && (
-                        <div className="relative flex flex-col items-center">
-                            {isVideoHidden ? (
-                                <img
-                                    src={chatUser.profileimg} // Placeholder image URL
-                                    alt="Placeholder"
-                                    className="w-64 max-w-md"
-                                    style={{ transform: 'scaleX(-1)' }}
-                                />
-                            ) : (
+                <div className="fixed inset-0 p-4 md:p-8 flex items-center justify-center">
+                    <div className="panel rounded-3xl w-full h-full flex flex-col md:flex-row items-center justify-center gap-6 p-4">
+                        {localStream && value === 'video' ? (
+                            <div className="relative w-full max-w-md panel-strong rounded-2xl overflow-hidden">
+                                {isVideoHidden ? (
+                                    <img src={user.profileimg} alt="User" className="w-full h-[22rem] object-cover" />
+                                ) : (
+                                    <video
+                                        ref={(video) => video && (video.srcObject = localStream)}
+                                        autoPlay
+                                        muted
+                                        className="w-full h-[22rem] object-cover"
+                                        style={{ transform: 'scaleX(-1)' }}
+                                    ></video>
+                                )}
+                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-3">
+                                    <button onClick={toggleMute} className={`${isMuted ? 'danger-btn' : 'accent-btn'} rounded-xl p-3`}><FaMicrophone /></button>
+                                    <button onClick={handleCallDisconnect} className="danger-btn rounded-xl p-3"><FaPhoneSlash /></button>
+                                    {value === 'video' && <button onClick={toggleVideoHide} className="panel-soft text-main rounded-xl p-3"><FaVideoSlash /></button>}
+                                </div>
+                            </div>
+                        ) : (
+                            <audio ref={(audio) => audio && (audio.srcObject = localStream)} autoPlay muted></audio>
+                        )}
+
+                        {isCalling && !remoteStream && (
+                            <div className="panel-strong rounded-2xl p-6 text-center">
+                                <h3 className="text-main font-semibold">Calling {chatUser.username}...</h3>
+                                <p className="text-sub text-sm mt-2">Waiting for answer</p>
+                            </div>
+                        )}
+
+                        {remoteStream && (
+                            value === 'video' ? (
                                 <video
-                                    ref={(video) => video && (video.srcObject = localStream)}
+                                    ref={(video) => video && (video.srcObject = remoteStream)}
                                     autoPlay
-                                    muted
-                                    className="w-full max-w-md"
+                                    className="w-full max-w-md h-[22rem] object-cover rounded-2xl panel-strong"
                                     style={{ transform: 'scaleX(-1)' }}
-                                />
-                            )}
-                            <div className="absolute bottom-0 mb-4 flex space-x-4">
-                                <button
-                                    onClick={toggleMute}
-                                    className={`${isMuted ? 'bg-gray-500' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
-                                >
-                                    <FaMicrophone />
-                                </button>
-
-                                <button
-                                    onClick={handleCallDisconnect}
-                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                >
-                                    <FaPhoneSlash />
-                                </button>
-
-                                <button
-                                    onClick={toggleVideoHide}
-                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                                >
-                                    <FaVideoSlash />
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {remoteStream && value === 'video' && (
-                        <video
-                            ref={(video) => video && (video.srcObject = remoteStream)}
-                            autoPlay
-                            className="w-full max-w-md"
-                            style={{ transform: 'scaleX(-1)' }}
-                        />
-                    )}
-
-                    {value !== 'video' && (
-                        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-                            <img
-                                src={chatUser?.profileimg || "https://via.placeholder.com/150"}
-                                alt="User Avatar"
-                                className="rounded-full w-24 h-24 mb-4"
-                            />
-                            <h2 className="text-lg font-bold mb-4">Calling {chatUser?.username}...</h2>
-
-                            {isCalling ? <p>Connecting...</p> : <p>Connected</p>}
-
-                            <div className="flex space-x-4 mt-4">
-                                <button
-                                    onClick={toggleMute}
-                                    className={`${isMuted ? 'bg-gray-500' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}
-                                >
-                                    {isMuted ? 'Unmute' : 'Mute'}
-                                </button>
-
-                                <button
-                                    onClick={handleCallDisconnect}
-                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                >
-                                    End Call
-                                </button>
-                            </div>
-                            <audio ref={(audio) => audio && (audio.srcObject = remoteStream)} autoPlay />
-                        </div>
-
-                    )}
+                                ></video>
+                            ) : (
+                                <audio ref={(audio) => audio && (audio.srcObject = remoteStream)} autoPlay></audio>
+                            )
+                        )}
+                    </div>
                 </div>
             )}
         </div>

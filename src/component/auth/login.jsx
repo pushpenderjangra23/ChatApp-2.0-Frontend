@@ -4,6 +4,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/user';
+import { useTheme } from '../context/theme';
+import { IoMoon, IoSunny } from 'react-icons/io5';
+
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -18,37 +21,32 @@ const Login = () => {
     });
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setTemplogin(isGuest);
         setError('');
         setLoading(true);
-        if (!templogin) {
-            if (!email || !password) {
-                setError('All fields are required');
-                setLoading(false);
-                return;
-            }
+
+        if (!isGuest && (!email || !password)) {
+            setError('All fields are required');
+            setLoading(false);
+            return;
         }
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}${templogin ? '/templogin' : '/login'}`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}${isGuest ? '/templogin' : '/login'}`, {
                 email,
                 password,
             });
 
-            console.log('Login successful:', response.data);
             const { token } = response.data;
-
-            // Save JWT token in localStorage
             localStorage.setItem('token', token);
-            //   onLogin(token);
-            notify()
-            console.log(response.data);
+            notify();
 
             setEmail('');
             setPassword('');
             setTimeout(() => {
                 setUser(null);
                 navigate('/');
-            }, 3000);
+            }, 1000);
         } catch (err) {
             console.error('Error during login:', err);
             setError(err.response?.data?.message || 'Invalid email or password.');
@@ -56,6 +54,7 @@ const Login = () => {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         const getAllUser = async () => {
             try {
@@ -74,7 +73,8 @@ const Login = () => {
             }
         };
         getAllUser();
-    }, [])
+    }, []);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
             <div className="max-w-md w-full border border-white/10 bg-slate-900/80 p-8 rounded-3xl shadow-2xl backdrop-blur-xl">
@@ -123,12 +123,11 @@ const Login = () => {
                             onClick={() => navigate(`${basePath}/signup`)}
                             className="mt-4 w-full bg-transparent border border-white/20 text-white py-3 px-4 rounded-xl hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
                         >
-                            Sign Up
+                            Create New Account
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-
             <ToastContainer />
         </div>
     );
