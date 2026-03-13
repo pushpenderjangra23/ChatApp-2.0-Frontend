@@ -10,6 +10,7 @@ const UserComponent = ({ user }) => {
     const [profileImage, setProfileImage] = useState(user?.profileimg);
     const navigate = useNavigate();
     const { setChatUser } = useContext(ChatUserContext);
+    const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
     const notify = () => toast.info("Logout Successful!", {
         autoClose: 2000,
     });
@@ -84,7 +85,7 @@ const UserComponent = ({ user }) => {
                 setChatUser(null);
                 notify();
                 setTimeout(() => {
-                    navigate(`${process.env.REACT_APP_BASE_URL}/login`);
+                    navigate(`${basePath}/login`);
                 }, 3000);
             }
         } catch (error) {

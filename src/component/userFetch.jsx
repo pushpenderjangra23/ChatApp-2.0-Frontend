@@ -18,7 +18,8 @@ const UserFetch = () => {
                 if (data.message === 'Invalid token.') {
                     localStorage.removeItem('token');
                     setUser(null);
-                    navigate('/api/v1/login');
+                    const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
+                    navigate(`${basePath}/login`);
                     return;
                 }
                 setUser(data.user);

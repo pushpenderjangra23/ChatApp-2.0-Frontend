@@ -33,6 +33,7 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
         type: 'success',
     });
     const [animatedUserId, setAnimatedUserId] = useState(null);
+    const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
 
     const notify = () => toast[alertmsg.type](alertmsg.message, {
         autoClose: 2000,
@@ -375,22 +376,22 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
 
     return (
         <>
-            <div className="w-10/12 md:w-72 bg-gray-800 text-white flex flex-col p-4 h-full transition-all duration-300 ease-in-out">
+            <div className="w-full md:w-80 lg:w-96 bg-slate-900/95 text-white flex flex-col p-4 md:p-5 h-full transition-all duration-300 ease-in-out border-r border-white/10">
                 {/* Profile Section */}
-                <div className="flex items-center mb-5 animate-fadeIn">
+                <div className="flex items-center mb-5 animate-fadeIn rounded-2xl border border-white/10 bg-slate-800/60 p-3">
                     <img
                         src={user?.profileimg || "https://images.unsplash.com/photo-1724086572650-685ff295750e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D"}
                         alt="Profile"
-                        className="rounded-full w-12 h-12 mr-3 hover:scale-110 transition-transform duration-200"
+                        className="rounded-full w-12 h-12 mr-3 hover:scale-110 transition-transform duration-200 ring-2 ring-cyan-400/30 object-cover"
                     />
                     <div className="flex-1">
                         <h2 className="font-semibold text-lg">{user?.username}</h2>
-                        <span className="text-sm text-gray-400">Active Now</span>
+                        <span className="text-xs text-cyan-200/80 uppercase tracking-wider">Active Now</span>
                     </div>
-                    <Link to={`${process.env.REACT_APP_BASE_URL}/profile`}>
+                    <Link to={`${basePath}/profile`}>
                         <IoMdSettings style={{ 'marginRight': '1em' }} className="cursor-pointer hover:rotate-90 transition-transform duration-300" />
                     </Link>
-                    <button onClick={togglePopup} className="bg-pink-500 text-white text-lg p-2 rounded-full hover:bg-pink-600 transform hover:scale-110 transition-all duration-200" style={{
+                    <button onClick={togglePopup} className="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white text-lg p-2 rounded-full hover:brightness-110 transform hover:scale-110 transition-all duration-200 shadow" style={{
                         height: '1.7rem',
                         width: '1.7rem',
                         display: 'flex',
@@ -531,13 +532,13 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                     <div className="flex justify-between">
                                         <button
                                             onClick={handleAddFriend}
-                                            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transform hover:scale-105 transition-all duration-200"
+                                            className="bg-emerald-500 text-white py-2 px-4 rounded-lg hover:bg-emerald-600 transform hover:scale-105 transition-all duration-200"
                                         >
                                             Add Friend
                                         </button>
                                         <button
                                             onClick={handleRemoveFriend}
-                                            className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transform hover:scale-105 transition-all duration-200"
+                                            className="bg-rose-500 text-white py-2 px-4 rounded-lg hover:bg-rose-600 transform hover:scale-105 transition-all duration-200"
                                         >
                                             Remove Friend
                                         </button>
@@ -555,13 +556,13 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                         placeholder="Search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-gray-700 text-white p-2 rounded-lg outline-none"
+                        className="w-full bg-slate-800/90 border border-white/10 text-slate-100 p-3 rounded-xl outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition"
                     />
                 </div>
 
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto hide-scrollbar">
-                    <h3 className="text-sm text-gray-400 mb-2 hide-scrollbar">Friends</h3>
+                    <h3 className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-3 hide-scrollbar">Friends</h3>
                     <div className="space-y-3 hide-scrollbar">
                         {filteredUsers.length > 0 ? (
                             filteredUsers.map((u) => {
@@ -575,8 +576,8 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                         key={u._id}
                                         className={`flex items-center p-2 rounded-lg cursor-pointer transition-all duration-300
                                             ${isActiveChatUser
-                                                ? 'bg-gradient-to-r from-indigo-600 to-grey-600 shadow-md'
-                                                : 'bg-gray-700 hover:bg-gray-600'}
+                                                ? 'bg-gradient-to-r from-cyan-500/80 to-indigo-500/80 shadow-xl border border-cyan-300/30'
+                                                : 'bg-slate-800/90 hover:bg-slate-700/90 border border-transparent hover:border-white/10'}
                                             ${isBeingAnimated ? 'animate-whatsapp-style-move' : ''}`}
                                         onClick={() => handleChangeUser(u._id, u.username, u.profileimg, u.email, u.description)}
                                     >
@@ -598,7 +599,7 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                             </p>
                                         </div>
                                         {messageNotification.some((m) => m.userId === u._id && m.status === true) && (
-                                            <div className="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center text-xs font-bold animate-notification-pulse">
+                                            <div className="min-w-5 h-5 px-1 rounded-full bg-cyan-500 flex items-center justify-center text-[10px] font-bold animate-notification-pulse shadow">
                                                 <span className="text-white">{messageNotification.find((m) => m.userId === u._id)?.messageCount || 1}</span>
                                             </div>
                                         )}
@@ -612,7 +613,6 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                     </div>
                 </div>
             </div>
-            <div className="w-auto md:hidden transition-opacity duration-300 hover:opacity-75" style={{ color: 'rgb(17 24 39 / var(--tw-bg-opacity))' }} onClick={() => setIsMenuOpen(false)}>div test te</div>
             <style>{`
             @keyframes whatsapp-style-move {
                     0% { 

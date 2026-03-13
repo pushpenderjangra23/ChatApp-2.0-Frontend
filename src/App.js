@@ -15,6 +15,8 @@ import VoiceCall from "./component/call/voiceCall";
 import CallPage from "./component/call/callpage";
 function App() {
   const { user } = useContext(UserContext);
+  const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
+  const routePath = (path) => `${basePath}${path}`;
   return (
     <BrowserRouter>
       <UserFetch />
@@ -26,17 +28,31 @@ function App() {
           {/* {user && ( */}
           <Route
             exact
-            path={process.env.REACT_APP_BASE_URL + '/profile'}
+            path={routePath('/profile')}
             element={<UserComponent user={user} />}
           />
           {/* )} */}
-          <Route exact path={process.env.REACT_APP_BASE_URL + "/call"} element={<VoiceCall />} />
-          <Route exact path={process.env.REACT_APP_BASE_URL + "/incomingCall"} element={<CallPage />} />
+          <Route exact path={routePath('/call')} element={<VoiceCall />} />
+          <Route exact path={routePath('/incomingCall')} element={<CallPage />} />
         </Route>
         <Route element={<Protectedlogin />}>
-          <Route exact path={process.env.REACT_APP_BASE_URL + "/signup"} element={<Signup />} />
-          <Route exact path={process.env.REACT_APP_BASE_URL + "/login"} element={<Login />} />
+          <Route exact path={routePath('/signup')} element={<Signup />} />
+          <Route exact path={routePath('/login')} element={<Login />} />
         </Route>
+        {basePath && (
+          <>
+            {/* fallback routes for environments where BASE_URL is set but frontend still loads on root */}
+            <Route element={<PrivateRoute />}>
+              <Route exact path={'/profile'} element={<UserComponent user={user} />} />
+              <Route exact path={'/call'} element={<VoiceCall />} />
+              <Route exact path={'/incomingCall'} element={<CallPage />} />
+            </Route>
+            <Route element={<Protectedlogin />}>
+              <Route exact path={'/signup'} element={<Signup />} />
+              <Route exact path={'/login'} element={<Login />} />
+            </Route>
+          </>
+        )}
         <Route path="*" element={<p>There's nothing here: 404!</p>} />
       </Routes>
     </BrowserRouter>
