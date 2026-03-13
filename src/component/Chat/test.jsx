@@ -22,7 +22,6 @@ function Test() {
     const username = process.env.REACT_APP_METERED_USERNAME;
     const credential = process.env.REACT_APP_METERED_PASSWORD;
     const basePath = (process.env.REACT_APP_BASE_URL || '').replace(/\/$/, '');
-
     useEffect(() => {
         if (user && socket) {
             socket.emit('register', { userId: user._id });
@@ -93,10 +92,10 @@ function Test() {
             toUserId: calluserid,
             peerId: peerjsid,
             senderId: user._id,
-            callType,
-            incomingCall,
-        };
-        sessionStorage.setItem('currentCall', JSON.stringify(obj));
+            callType: callType,
+            incomingCall: incomingCall
+        }
+        sessionStorage.setItem('currentCall', JSON.stringify(obj))
         window.open(`${basePath}/incomingCall`, '_blank');
         setCallPopupVisible(false);
     };
@@ -107,38 +106,46 @@ function Test() {
     };
 
     return (
-        <div className="app-bg min-h-screen p-2 md:p-4">
-            {!loadingForKey ? (
-                <div className="panel rounded-3xl h-[95vh] md:h-[calc(100vh-2rem)] overflow-hidden flex">
-                    <div className="flex w-full h-full">
-                        <aside className="hidden md:block h-full">
-                            <Sidebar setIsMenuOpen={setIsMenuOpen} sendMessage={sendMessage} />
-                        </aside>
-
-                        <aside className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} w-full h-full`}>
-                            <Sidebar setIsMenuOpen={setIsMenuOpen} sendMessage={sendMessage} />
-                        </aside>
-
-                        <main className={`flex h-full w-full ${!isMenuOpen ? 'block' : 'hidden'}`}>
-                            <ChatWindow setIsMenuOpen={setIsMenuOpen} setSendMessage={setSendMessage} />
-                        </main>
+        <div className="chat-app-shell min-h-[93vh] md:min-h-screen bg-slate-950 p-2 md:p-4">
+            {!loadingForKey ? (<div className="flex h-[91vh] md:h-[calc(100vh-2rem)] rounded-3xl border border-white/10 bg-slate-900/80 shadow-[0_20px_80px_rgba(56,189,248,0.18)] backdrop-blur-xl overflow-hidden">{/* style={{ 'height': '93vh' }} */}
+                <div className='flex w-full h-full' >
+                    <div className="hidden md:block"> {/* Hidden on small screens, visible on medium and above */}
+                        <Sidebar setIsMenuOpen={setIsMenuOpen} sendMessage={sendMessage} />
                     </div>
-                    <UserFetch />
-
-                    {isCallPopupVisible && (
-                        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-                            <div className="panel-strong rounded-3xl p-6 w-full max-w-sm text-center text-main">
-                                <h2 className="text-2xl font-semibold">Incoming {callType} call</h2>
-                                <img
-                                    src={incomingCall?.senderProfileImg}
-                                    alt="Caller"
-                                    className="w-24 h-24 rounded-full mx-auto mt-4 mb-3 object-cover border border-soft"
-                                />
-                                <p className="text-sub">{incomingCall?.senderName} wants to connect with you.</p>
-                                <div className="mt-6 flex gap-3 justify-center">
-                                    <button onClick={handleAcceptCall} className="success-btn rounded-xl px-5 py-2 font-semibold">Accept</button>
-                                    <button onClick={handleDeclineCall} className="danger-btn rounded-xl px-5 py-2 font-semibold">Decline</button>
-                                </div>
+                    {/* {isMenuOpen && <Sidebar setIsMenuOpen={setIsMenuOpen} sendMessage={sendMessage} />} */}
+                    <div className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'} w-full h-[93vh] md:h-screen flex bg-slate-900`}>
+                        <Sidebar setIsMenuOpen={setIsMenuOpen} sendMessage={sendMessage} />
+                    </div>
+                    <div className={`flex h-full w-full ${!isMenuOpen ? 'block' : 'hidden'}  bg-slate-900`} >
+                        <ChatWindow setIsMenuOpen={setIsMenuOpen} setSendMessage={setSendMessage} />
+                    </div>
+                </div>
+                {/* {!isMenuOpen && <ChatWindow setIsMenuOpen={setIsMenuOpen} setSendMessage={setSendMessage} />} */}
+                <UserFetch />
+                {/* Incoming Call Popup */}
+                {isCallPopupVisible && (
+                    <div className="fixed inset-0 flex items-center justify-center z-50 bg-slate-950/70 backdrop-blur-sm px-4">
+                        <div className="w-full max-w-sm border border-white/20 bg-slate-900 p-6 rounded-2xl shadow-2xl text-center text-white">
+                            <h2 className="text-xl font-bold mb-4">Incoming Call</h2>
+                            <img
+                                src={incomingCall?.senderProfileImg}
+                                alt="Caller"
+                                className="w-20 h-20 rounded-full mx-auto mb-3 ring-2 ring-cyan-400"
+                            />
+                            <p className="text-slate-300">{incomingCall?.senderName} is calling you...</p>
+                            <div className="mt-4 flex justify-center space-x-4">
+                                <button
+                                    onClick={handleAcceptCall}
+                                    className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-5 rounded-xl transition"
+                                >
+                                    Accept
+                                </button>
+                                <button
+                                    onClick={handleDeclineCall}
+                                    className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-5 rounded-xl transition"
+                                >
+                                    Decline
+                                </button>
                             </div>
                         </div>
                     )}
@@ -150,8 +157,20 @@ function Test() {
                         <h2 className="mt-5 text-xl font-semibold text-main">Preparing Secure Session</h2>
                         <p className="text-sub mt-1">Generating encryption keys for private chat.</p>
                     </div>
-                </div>
-            )}
+                )}
+            </div>) :
+                (<div className="flex flex-col items-center justify-center bg-slate-900 h-[93vh] md:h-screen">
+                    <div className="p-8 rounded-2xl border border-white/10 bg-slate-800/70 shadow-2xl text-center text-white">
+                        <div className="mb-6">
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-400 mx-auto"></div>
+                        </div>
+                        <h2 className="text-xl font-semibold text-white mb-3">Preparing Encryption Keys</h2>
+                        <p className="text-gray-300">
+                            This may take a moment. We're generating secure keys for your messages.
+                        </p>
+                    </div>
+                </div>)
+            }
         </div>
     );
 }

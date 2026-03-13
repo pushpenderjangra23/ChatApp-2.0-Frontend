@@ -377,9 +377,9 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
 
     return (
         <>
-            <div className="w-full md:w-80 lg:w-96 panel-strong text-main flex flex-col p-4 md:p-5 h-full transition-all duration-300 ease-in-out border-r border-soft">
+            <div className="w-full md:w-80 lg:w-96 bg-slate-900/95 text-white flex flex-col p-4 md:p-5 h-full transition-all duration-300 ease-in-out border-r border-white/10">
                 {/* Profile Section */}
-                <div className="flex items-center mb-5 animate-fadeIn rounded-2xl panel-soft p-3">
+                <div className="flex items-center mb-5 animate-fadeIn rounded-2xl border border-white/10 bg-slate-800/60 p-3">
                     <img
                         src={user?.profileimg || "https://images.unsplash.com/photo-1724086572650-685ff295750e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D"}
                         alt="Profile"
@@ -387,9 +387,8 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                     />
                     <div className="flex-1">
                         <h2 className="font-semibold text-lg">{user?.username}</h2>
-                        <span className="text-xs text-sub uppercase tracking-wider">Active Now</span>
+                        <span className="text-xs text-cyan-200/80 uppercase tracking-wider">Active Now</span>
                     </div>
-                    <ThemeToggle />
                     <Link to={`${basePath}/profile`}>
                         <IoMdSettings style={{ 'marginRight': '1em' }} className="cursor-pointer hover:rotate-90 transition-transform duration-300" />
                     </Link>
@@ -558,13 +557,13 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                         placeholder="Search"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full panel-soft text-main p-3 rounded-xl outline-none"
+                        className="w-full bg-slate-800/90 border border-white/10 text-slate-100 p-3 rounded-xl outline-none focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20 transition"
                     />
                 </div>
 
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto hide-scrollbar">
-                    <h3 className="text-xs uppercase tracking-[0.2em] text-sub mb-3 hide-scrollbar">Conversations</h3>
+                    <h3 className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-3 hide-scrollbar">Friends</h3>
                     <div className="space-y-3 hide-scrollbar">
                         {filteredUsers.length > 0 ? (
                             filteredUsers.map((u) => {
@@ -578,8 +577,8 @@ function Sidebar({ setIsMenuOpen, sendMessage }) {
                                         key={u._id}
                                         className={`flex items-center p-2 rounded-lg cursor-pointer transition-all duration-300
                                             ${isActiveChatUser
-                                                ? 'accent-btn shadow-xl border border-soft'
-                                                : 'panel-soft border border-transparent hover:border-soft'}
+                                                ? 'bg-gradient-to-r from-cyan-500/80 to-indigo-500/80 shadow-xl border border-cyan-300/30'
+                                                : 'bg-slate-800/90 hover:bg-slate-700/90 border border-transparent hover:border-white/10'}
                                             ${isBeingAnimated ? 'animate-whatsapp-style-move' : ''}`}
                                         onClick={() => handleChangeUser(u._id, u.username, u.profileimg, u.email, u.description)}
                                     >

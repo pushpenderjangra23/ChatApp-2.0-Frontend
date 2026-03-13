@@ -223,7 +223,7 @@ function ChatMessages({ setSendMessage }) {
     }
     return (
         <>
-            <div ref={messageContainerRef} className="flex-1 p-5 md:p-6 overflow-y-auto hide-scrollbar">
+            <div ref={messageContainerRef} className="flex-1 p-5 md:p-6 overflow-y-auto bg-transparent hide-scrollbar">
                 {messages?.map((msg, index) => (
                     <div
                         key={index}
@@ -234,16 +234,16 @@ function ChatMessages({ setSendMessage }) {
                             <img
                                 src={chatUser?.profileimg || "https://images.unsplash.com/photo-1724086572650-685ff295750e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D"}
                                 alt="Sender"
-                                className="rounded-full w-10 h-10 mr-3 shadow-lg border border-soft object-cover"
+                                className="rounded-full w-10 h-10 mr-3 shadow-lg ring-2 ring-white/10 object-cover"
                             />
                         )}
 
                         <div
                             className={`p-3 overflow-auto rounded-2xl shadow-lg max-w-sm border ${msg?.fromUserId === user?._id
                                 ? msg.filetype?.toLowerCase() === 'jpg' || msg.filetype?.toLowerCase() === 'jpeg' || msg.filetype?.toLowerCase() === 'png' || msg.filetype?.toLowerCase() === 'mp4'
-                                    ? 'panel-soft text-main border-soft'
-                                    : 'accent-btn text-white border-soft'
-                                : 'panel-soft text-main border-soft'
+                                    ? 'bg-slate-700/80 border-white/10 text-white'
+                                    : 'bg-gradient-to-r from-cyan-500 to-indigo-500 border-cyan-300/40 text-white'
+                                : 'bg-slate-800/90 border-white/10 text-white'
                                 }`}
                         >
                             {msg.filetype?.toLowerCase() === 'jpg' || msg.filetype?.toLowerCase() === 'jpeg' || msg.filetype?.toLowerCase() === 'png' ? (
@@ -293,7 +293,7 @@ function ChatMessages({ setSendMessage }) {
                                     {selectedMessageIndex === index && (
                                         <div
                                             ref={menuRef}
-                                            className="fixed shadow rounded-lg py-1 z-30 panel-strong border border-soft text-main"
+                                            className="fixed shadow rounded-lg py-1 z-30 bg-slate-800 border border-white/10 text-white"
                                             style={{
                                                 left: contextMenuCoords ? contextMenuCoords.x : 'auto',
                                                 top: contextMenuCoords ? contextMenuCoords.y : 'auto',
@@ -302,7 +302,7 @@ function ChatMessages({ setSendMessage }) {
                                         >
                                             <div className="flex flex-col">
                                                 <button
-                                                    className="px-3 py-1 text-left hover:opacity-70"
+                                                    className="px-3 py-1 text-left hover:bg-slate-700"
                                                     onClick={() => {
                                                         handleCopy(msg.message);
                                                         setSelectedMessageIndex(null);
@@ -327,7 +327,7 @@ function ChatMessages({ setSendMessage }) {
                             <img
                                 src={user?.profileimg || "default-avatar-url"}
                                 alt="User"
-                                className="rounded-full w-10 h-10 ml-3 shadow-lg border border-soft object-cover"
+                                className="rounded-full w-10 h-10 ml-3 shadow-lg ring-2 ring-cyan-300/40 object-cover"
                             />
                         )}
                     </div>
@@ -335,7 +335,7 @@ function ChatMessages({ setSendMessage }) {
             </div>
 
 
-            <div className="p-2 md:p-3 flex items-center ml-1 mr-1 mb-1 rounded-2xl panel-strong border border-soft shadow-2xl">
+            <div className="p-2 md:p-3 flex items-center ml-1 mr-1 mb-1 rounded-2xl border border-white/10 bg-slate-900/70 shadow-2xl backdrop-blur-lg">
                 <div className="flex-1 relative">
                     <textarea
                         value={newMessage}
@@ -347,7 +347,7 @@ function ChatMessages({ setSendMessage }) {
                             }
                         }}
                         placeholder="Type a message"
-                        className="w-full panel-soft text-main p-3 pl-4 pr-4 rounded-2xl outline-none resize-none overflow-y-auto scrollbar-hide min-h-[45px] max-h-[120px] h-14"
+                        className="w-full bg-slate-800/90 border border-white/10 text-white p-3 pl-4 pr-4 rounded-2xl outline-none resize-none overflow-y-auto scrollbar-hide min-h-[45px] max-h-[120px] h-14 focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
 
                         disabled={!chatUser}
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -368,8 +368,8 @@ function ChatMessages({ setSendMessage }) {
                         <section>
                             <div {...getRootProps()}>
                                 <input {...getInputProps()} name='file' disabled={!chatUser} type='file' accept="image/*,video/*" />
-                                <div className={`${chatUser ? 'cursor-styleer' : 'cursor-default'} m-3 p-2 rounded-xl panel-soft transition`}>
-                                    <LuUpload className="text-main" size={18} />
+                                <div className={`${chatUser ? 'cursor-styleer' : 'cursor-default'} m-3 p-2 rounded-xl bg-slate-800 hover:bg-slate-700 transition`}>
+                                    <LuUpload className="text-cyan-200" size={18} />
                                 </div>
                             </div>
                         </section>

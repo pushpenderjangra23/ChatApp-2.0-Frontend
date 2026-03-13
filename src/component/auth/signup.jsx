@@ -42,7 +42,7 @@ const Signup = () => {
             setPassword('');
             setTimeout(() => {
                 navigate(`${basePath}/login`);
-            }, 1000);
+            }, 3000);
         } catch (err) {
             console.error('Error during signup:', err);
             if (err.response && err.response.data) {
@@ -56,13 +56,44 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen app-bg flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-5xl panel rounded-3xl p-3 md:p-4 grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-                <div className="panel-strong rounded-2xl p-6 md:p-8 order-2 md:order-1">
-                    <div className="flex justify-end">
-                        <button type="button" onClick={toggleTheme} className="panel-soft rounded-xl p-2 text-main">
-                            {isDark ? <IoSunny /> : <IoMoon />}
-                        </button>
+        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+            <div className="max-w-md w-full border border-white/10 bg-slate-900/80 p-8 rounded-3xl shadow-2xl backdrop-blur-xl">
+                <p className='text-center text-cyan-300 text-sm mb-2'>Create account</p>
+                <h2 className="text-3xl font-bold text-center text-white">Sign Up</h2>
+                {error && <div className="text-red-500 text-sm mt-2 text-center">{error}</div>}
+                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                    <div>
+                        <label className="block text-slate-300">Username</label>
+                        <input
+                            type="text"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="w-full px-4 py-3 bg-slate-800 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            disabled={loading}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-slate-300">Email</label>
+                        <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full px-4 py-3 bg-slate-800 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            disabled={loading}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-slate-300">Password</label>
+                        <input
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-3 bg-slate-800 border border-white/10 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            disabled={loading}
+                        />
                     </div>
                     <h2 className="text-3xl font-bold text-main text-center">Create account</h2>
                     <p className="text-sub text-center mt-1">Join the chat experience</p>
@@ -86,9 +117,19 @@ const Signup = () => {
                 </div>
                 <div className="hidden md:flex flex-col justify-between panel-soft rounded-2xl p-8 order-1 md:order-2">
                     <div>
-                        <p className="text-sub uppercase tracking-[0.3em] text-xs">New user</p>
-                        <h1 className="text-main text-4xl font-semibold mt-4">Start your conversations in seconds.</h1>
-                        <p className="text-sub mt-3">Create your profile, add friends, and enjoy private text, voice, and video communication.</p>
+                        <button
+                            type="submit"
+                            className={`w-full bg-gradient-to-r from-cyan-500 to-indigo-500 text-white py-3 px-4 rounded-xl hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-cyan-400 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={loading}
+                        >
+                            {loading ? 'Signing up...' : 'Sign Up'}
+                        </button>
+                        <button
+                            onClick={() => navigate(`${basePath}/login`)}
+                            className="mt-4 w-full bg-transparent border border-white/20 text-white py-3 px-4 rounded-xl hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                        >
+                            Log In
+                        </button>
                     </div>
                     <p className="text-sub text-sm">Switch between dark and light theme anytime.</p>
                 </div>

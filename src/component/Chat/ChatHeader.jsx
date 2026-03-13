@@ -52,50 +52,56 @@ function ChatHeader({ setIsMenuOpen }) {
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('value', value);
         window.open(`${basePath}/call`, '_blank');
-    };
-
+        console.log(socket.id)
+    }
     return (
-        <div className="px-4 md:px-6 py-3 border-b border-soft panel-strong flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3 min-w-0">
-                <button className="block md:hidden text-main" onClick={() => setIsMenuOpen(true)}>
-                    <IoMenu size={20} />
-                </button>
+        <div className="flex items-center justify-between p-4 md:p-5 border-b border-white/10 bg-slate-900/80 backdrop-blur-md">
+            <div className='block md:hidden cursor-pointer text-white' style={{ 'marginRight': '1rem' }} onClick={() => {
+                setIsMenuOpen(true);
+            }}>
+                <IoMenu size={20} />
+            </div>
+            <div className="flex items-center" style={{ 'fontSize': '13px' }}>
                 <img
                     src={chatUser?.profileimg || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
                     onClick={() => setImageZoomShowModal(true)}
                     alt="User"
-                    className="rounded-full w-11 h-11 object-cover cursor-pointer border border-soft"
+                    className="rounded-full w-12 h-12 cursor-pointer ring-2 ring-cyan-400/40 object-cover"
                 />
-                {showImageZoomModal && <Modal image={chatUser?.profileimg} alt="user" onClose={() => setImageZoomShowModal(false)} />}
-                <div className="min-w-0">
-                    <p className="text-main font-semibold truncate">{chatUser?.username}</p>
-                    <p className="text-sub text-sm truncate">{typingStatus || status}</p>
+                {showImageZoomModal && (
+                    <Modal image={chatUser?.profileimg} alt={'user'} onClose={() => setImageZoomShowModal(false)} />)}
+                <div className="ml-3">
+                    <span className="block font-semibold text-white">{chatUser?.username}</span>
+                    <span className="block text-sm text-cyan-200/80" style={{ 'fontSize': '13px' }}>{typingStatus || status}</span>
                 </div>
             </div>
+            <div className="flex items-center space-x-3 text-white" style={{ 'width': '9em' }}>
 
             <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <button
-                    className="panel-soft rounded-xl p-2 text-main"
-                    onMouseEnter={() => setHoveredIcon('settings')}
-                    onMouseLeave={() => setHoveredIcon(null)}
-                    onClick={() => chatUser && setShowSettingPopup(true)}
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
+                    onMouseEnter={() => handleMouseEnter('settings')}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={() => chatUser ? setShowSettingPopup(true) : setShowSettingPopup(false)}
+
                 >
                     <IoMdSettings size={hoveredIcon === 'settings' ? 17 : 14} />
                 </button>
                 <button
-                    className="panel-soft rounded-xl p-2 text-main"
-                    onMouseEnter={() => setHoveredIcon('call')}
-                    onMouseLeave={() => setHoveredIcon(null)}
-                    onClick={() => chatUser && handleSetData('voice')}
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
+                    onMouseEnter={() => handleMouseEnter('call')}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={() => chatUser ? handleSetData('voice') : ""}
                 >
                     <IoMdCall size={hoveredIcon === 'call' ? 17 : 14} />
                 </button>
                 <button
-                    className="panel-soft rounded-xl p-2 text-main"
-                    onMouseEnter={() => setHoveredIcon('video')}
-                    onMouseLeave={() => setHoveredIcon(null)}
-                    onClick={() => chatUser && handleSetData('video')}
+                    className="p-2 bg-slate-700/80 hover:bg-cyan-500/20 rounded-full text-white transition"
+                    onMouseEnter={() => handleMouseEnter('video')}
+                    onMouseLeave={handleMouseLeave}
+                    // onClick={() => chatUser ? setShowVideoCall(true) : setShowVideoCall(false)}
+                    onClick={() => chatUser ? handleSetData('video') : ""}
                 >
                     <FaVideo size={hoveredIcon === 'video' ? 17 : 14} />
                 </button>
