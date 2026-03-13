@@ -7,7 +7,6 @@ function CallPage() {
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
     const peerInstance = useRef();
-    const [peerjsid, setpeerid] = useState(null);
     const socket = useSocket();
     const [isInCall, setIsInCall] = useState(true);
     const [isMuted, setIsMuted] = useState(false);
@@ -36,7 +35,6 @@ function CallPage() {
         });
 
         peer.on('open', (id) => {
-            setpeerid(id);
             start(id);
         });
 

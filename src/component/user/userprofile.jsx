@@ -61,7 +61,7 @@ const UserComponent = ({ user }) => {
         formData.append('email', userData.email);
         formData.append('description', userData.description);
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/updateUser`, formData, {
+            await axios.put(`${process.env.REACT_APP_API_URL}/updateUser`, formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'multipart/form-data',
